@@ -3,3 +3,13 @@
 ################################################################################
 
 /.vs/PageSpeedCheck/v15/Server/sqlite3
+/PageSpeedCheck.Integration/bin/Debug/netstandard2.0
+/PageSpeedCheck.Integration/obj
+/PageSpeedCheck.Integration.Tests/bin/Debug/netcoreapp2.2
+/PageSpeedCheck.Integration.Tests/obj
+/PageSpeedCheck.Model/bin/Debug/netstandard2.0
+/PageSpeedCheck.Model/obj
+/PageSpeedCheck.Web/bin/Debug/netcoreapp2.2
+/PageSpeedCheck.Web/obj
+/PageSpeedCheck.Web.Tests/bin/Debug/netcoreapp2.2
+/PageSpeedCheck.Web.Tests/obj

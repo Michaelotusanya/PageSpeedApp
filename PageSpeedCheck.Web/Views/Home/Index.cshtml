@@ -1,0 +1,94 @@
+﻿@using System.Text.RegularExpressions
+@using PageSpeedCheck.Web.Utility
+@model PageSpeedCheck.Model.Dto.PageSpeedDto
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div>
+    <form method="get" action="/home/getpagespeedanalytics">
+        <input class="form-control mr-sm-8" name="Url" type="text" placeholder="Search">
+        <button class="btn btn-primary my-2 my-sm-2" type="submit">Check Website</button>
+    </form>
+
+    <hr />
+    <br />
+    <div>
+        @if(!string.IsNullOrEmpty(Model.id))
+        {
+            <h2>@Model.id</h2>
+            <i>@Model.title</i>
+            <h3>Page Speed Score: @Model.score | @(Model.score < 50 ? "Slow" : Model.score > 50 && Model.score < 90 ? "Average" : "Fast")</h3>
+            <span>Scale:90-100 (fast) 50-89 (average) 0-49 (slow)</span>
+        }
+    </div>
+
+    @if (Model.formattedResults != null)
+    {
+        var index = 0;
+        <div class="accordion" id="accordionExample">
+            @foreach (var result in Model.formattedResults.ruleResults)
+            {
+                var item = result.Value;
+                var classIndicator = item.ruleImpact > 0 ? "btn-danger" : "btn-success";
+                <div class="card">
+                    <div class="card-header" id="heading@(index)">
+                        <h5 class="mb-0">
+                            <button class="btn @(classIndicator)" type="button" data-toggle="collapse" data-target="#collapse@(index)" aria-expanded="true" aria-controls="collapseOne">
+                                @result.Key (Rule Impact - @item.ruleImpact)
+                            </button>
+                        </h5>
+                    </div>
+
+                    <div id="collapse@(index)" class="collapse hide" aria-labelledby="heading@(index)" data-parent="#accordionExample">
+                        <div class="card-body">
+                            @foreach (var urlBlock in item.urlBlocks)
+                            {
+                                if (urlBlock.header != null)
+                                {
+                                    if (item.urlBlocks.IndexOf(urlBlock) == 0)
+                                    {
+                                        <h3>@urlBlock.header.format</h3>
+
+                                    }
+                                    else if (urlBlock.header.args != null)
+                                    {
+                                        var args = urlBlock.header.args;
+                                        var formattedString = urlBlock.header.format.FormatString(args);
+
+                                        <h5>@formattedString</h5>
+                                    }
+
+                                    var hyperLink = @urlBlock.header.args?.FirstOrDefault(x => x.type == "HYPERLINK")?.value;
+                                    if (!string.IsNullOrEmpty(hyperLink))
+                                    {
+                                        <span>More information: <a href="@hyperLink" target="_blank">@hyperLink</a></span>
+                                    }
+
+                                }
+
+                                <hr />
+                                if (urlBlock.urls != null)
+                                {
+                                    foreach (var urlItem in urlBlock.urls)
+                                    {
+                                        if (urlItem.result.args != null)
+                                        {
+                                            <i>@urlItem.result.format.FormatString(urlItem.result.args)</i>
+                                            <br />
+                                            <br />
+                                            <hr />
+                                        }
+                                    }
+                                }
+
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                index++;
+            }
+        </div>
+    }
+</div>
